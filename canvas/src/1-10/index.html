@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>rubber band</title>
+<style>
+* {
+  margin: 0;
+  padding; 0;
+}
+body {
+  background-color: rgba(100, 145, 205, .3);
+}
+#canvas {
+  margin-left: 20px;
+  margin-right: 0;
+  margin-bottom: 20px;
+  border: thin solid #aaa;
+  cursor: crosshair;
+  padding: 0;
+}
+#controls {
+  margin: 20px 0px 20px 20px;
+}
+#rubberbandDiv {
+  display: none;
+  position: absolute;
+  border: 3px solid yellow;
+  cursor: crosshair;
+}
+</style>
+</head>
+<body>
+<div id="controls">
+  <input type="button" id="resetButton" value="Reset">
+</div>
+<div id="rubberbandDiv"></div>
+<canvas id="canvas" width="600" height="600"></canvas>
+<script src="script.js"></script>
+</body>
+</html>
