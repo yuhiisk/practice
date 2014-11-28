@@ -49,7 +49,6 @@
     resetButton.addEventListener('click', reset, false);
     saveButton.addEventListener('click', save, false);
 
-
     /**
      * Funtion
      */
