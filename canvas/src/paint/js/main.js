@@ -1,4 +1,7 @@
-/*! canvas paint */
+/*!
+ * canvas paint
+ *
+ **/
 (function(win, doc) {
 
   'use strict';
