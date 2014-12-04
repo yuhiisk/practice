@@ -1,8 +1,6 @@
 /*!
  * canvas paint
  *
- * TODO: undo, redo
- *
  **/
 (function(win, doc) {
 
@@ -11,9 +9,10 @@
   /**
    * Variables
    */
-  var lineWidth = 1,
+  var lineWidth = 2.5,
     lineHeight = 1,
     drawCount = -1,
+    points = [],
     history = [],
     oldX = 0,
     oldY = 0;
@@ -24,9 +23,7 @@
 
   function init() {
 
-    var undoButton = doc.getElementById('undo'),
-      redoButton = doc.getElementById('redo'),
-      resetButton = doc.getElementById('reset'),
+    var resetButton = doc.getElementById('reset'),
       saveButton = doc.getElementById('save'),
       canvas = doc.getElementById('canvas'),
       ctx = canvas.getContext('2d'),
@@ -43,9 +40,6 @@
      */
     canvas.addEventListener('mousedown', onMouseDownHandler, false);
     canvas.addEventListener('mouseup', onMouseUpHandler, false);
-
-    undoButton.addEventListener('mousedown', undo, false);
-    redoButton.addEventListener('mousedown', redo, false);
 
     resetButton.addEventListener('click', reset, false);
     saveButton.addEventListener('click', save, false);
@@ -70,40 +64,62 @@
       canvas.removeEventListener('mousemove', draw, true);
     }
 
-    function drawCurve() {
+    function drawStaticLine() {
+      var base = {
+        x: 100,
+        y: 100
+      };
+
+      ctx.lineWidth = lineWidth;
+
+      // straight line
+      ctx.strokeStyle = 'rgba(122, 122, 122, .6)';
       ctx.beginPath();
-      ctx.moveTo(ctx.canvas.width / 2, ctx.canvas.height / 2);
-      ctx.quadraticCurveTo(50, 90, 90, 10);
+      ctx.moveTo(0, 0);
+      ctx.lineTo(150, 150);
+      ctx.lineTo(100, 200);
+      ctx.lineTo(50, 250);
+      ctx.lineTo(100, 300);
+      ctx.lineTo(150, 350);
+      ctx.lineTo(100, 400);
+      ctx.lineTo(50, 450);
+      ctx.lineTo(100, 500);
+      ctx.lineTo(150, 550);
+      ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+
       ctx.stroke();
+
+      // bezier
+      ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      // ctx.moveTo(ctx.canvas.width / 2, ctx.canvas.height / 2);
+      ctx.quadraticCurveTo(150, 150, 100, 200);
+      ctx.quadraticCurveTo(50, 250, 100, 300);
+      ctx.quadraticCurveTo(150, 350, 100, 400);
+      ctx.quadraticCurveTo(50, 450, 100, 500);
+      ctx.quadraticCurveTo(150, 550, ctx.canvas.width, ctx.canvas.height);
+      ctx.stroke();
+
     }
+    drawStaticLine();
 
     function draw(e) {
       var x = e.clientX - canvasPos.left,
         y = e.clientY - canvasPos.top;
 
+        // 描画位置を保存しておく
+        points.push({ x: x, y: y });
+
+        if (points.length < 2) { return; }
+
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
-        ctx.moveTo(oldX, oldY);
-        ctx.quadraticCurveTo(oldX + 50/***/, oldY + 90/***/, x/***/, y/***/);
-        // ctx.lineTo(x, y);
+        ctx.moveTo(points[points.length - 2].x, points[points.length - 2].y);
+        ctx.quadraticCurveTo(points[points.length - 2].x, points[points.length - 2].y, points[points.length - 1].x, points[points.length - 1].y);
+
         ctx.stroke();
-        oldX = x;
-        oldY = y;
-    }
 
-    function undo(e) {
-      if (drawCount < 0) { return; } // 0だったらクリア
-      drawCount--;
-      console.log(drawCount, history);
-      ctx.putImageData(history[drawCount], 0, 0);
-    }
-
-    // TODO:bugfix
-    function redo(e) {
-      if (drawCount >= history.length) { return; }
-      drawCount++;
-      console.log(drawCount, history);
-      ctx.putImageData(history[drawCount], 0, 0);
     }
 
     function reset() {
